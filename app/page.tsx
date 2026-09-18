@@ -162,6 +162,15 @@ export default function Home() {
   const decisionCount = result?.decisions.length ?? 3;
   const weakestConfidence = result?.policy.confidence ?? null;
   const emptyHeads = Object.entries(questionsForPreset(presetId));
+  const evaluationStep = result?.mode === 'live'
+    ? { action: 'EVALUATE', label: 'TypeSafe Jev' }
+    : result?.mode === 'demo'
+      ? { action: 'SIMULATE', label: 'Jev-style decision' }
+      : failedLive
+        ? { action: 'LIVE ERROR', label: 'Gateway/Jev request failed' }
+        : loading
+          ? { action: 'RUNNING', label: 'Awaiting result' }
+          : { action: 'EVALUATE', label: 'Awaiting run' };
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -340,7 +349,7 @@ export default function Home() {
               <div className="flow-stack">
                 <div className="flow-node"><span>01</span><div><small>STATE</small><strong>Application context</strong></div></div>
                 <div className="flow-line"><i /></div>
-                <div className="flow-node accent"><span>02</span><div><small>EVALUATE</small><strong>TypeSafe Jev</strong></div></div>
+                <div className="flow-node accent"><span>02</span><div><small>{evaluationStep.action}</small><strong>{evaluationStep.label}</strong></div></div>
                 <div className="flow-line split"><i /><i /><i /></div>
                 <div className="flow-outputs"><span>CHOICE</span><span>SCORE</span><span>BOOL</span></div>
                 <div className="flow-line"><i /></div>
